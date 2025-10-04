@@ -2,8 +2,9 @@
 export interface Profile {
   id: string;
   email: string;
-  display_name?: string;
-  avatar_url?: string;
+  username?: string;
+  full_name?: string;
+  avatar_url?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -11,17 +12,26 @@ export interface Profile {
 export interface Band {
   id: string;
   name: string;
+  slug: string;
   description?: string;
+  logo_url?: string | null;
+  created_by: string;
   created_at: string;
   updated_at: string;
 }
 
 export interface BandMember {
   id: string;
-  band_id: string;
-  profile_id: string;
+  org_id: string;
+  user_id: string;
   role: 'owner' | 'admin' | 'member';
   joined_at: string;
+  profiles?: {
+    id: string;
+    email: string;
+    full_name?: string;
+    avatar_url?: string | null;
+  };
 }
 
 export interface Venue {
@@ -79,7 +89,7 @@ export interface AssistantPlan {
 
 export interface AssistantAction {
   type: 'create_show' | 'add_earning' | 'update_show' | 'add_calendar_event';
-  data: Record<string, any>;
+  data: Record<string, unknown>;
 }
 
 // UI/Component Types

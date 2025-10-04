@@ -26,23 +26,52 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
 
 ## Development Commands
 
-### Getting Started
+### 🛠️ Getting Started
 ```bash
 # Install dependencies
 npm install
 
-# Copy environment variables template
-cp .env.example .env
-# Edit .env with your API keys
-
-# Start development server
+# For mock development (no API keys needed)
 npm run dev
 
-# Build for production
-npm run build
+# For full production setup:
+cp .env.example .env.local
+# Edit .env.local with your API keys
+npm run dev
+```
 
-# Preview production build
-npm run preview
+### 🔥 Running Commands in Background (IMPORTANT!)
+
+**To prevent terminal blocking when running long-running processes:**
+
+#### Windows PowerShell:
+```powershell
+# Start dev server in background
+Start-Process PowerShell -ArgumentList '-NoExit', '-Command', 'npm run dev' -PassThru
+
+# Start Supabase in background
+Start-Process PowerShell -ArgumentList '-NoExit', '-Command', 'npm run supabase:start' -PassThru
+
+# Start tests with UI in background
+Start-Process PowerShell -ArgumentList '-NoExit', '-Command', 'npm run test:ui' -PassThru
+```
+
+#### macOS/Linux:
+```bash
+# Start dev server in background
+npm run dev &
+
+# Start Supabase in background
+npm run supabase:start &
+
+# Start tests in background
+npm run test:ui &
+```
+
+### 🏗️ Build Commands
+```bash
+npm run build        # Build for production
+npm run preview      # Preview production build
 ```
 
 ### Development Workflow
@@ -68,12 +97,33 @@ npm run generate-types
 
 ### Testing the App
 ```bash
-# Start dev server and visit http://localhost:5173
-npm run dev
+# Start dev server in background and visit http://localhost:5173
+Start-Process PowerShell -ArgumentList '-NoExit', '-Command', 'npm run dev' -PassThru
 
 # Test PWA installation in Chrome/Edge:
 # 1. Open DevTools > Application > Manifest
 # 2. Click "Install" or use browser's install prompt
+
+# Run Playwright tests
+npm run test         # Headless tests
+npm run test:ui      # Interactive testing UI (background recommended)
+npm run test:headed  # Tests in browser
+```
+
+### 📝 Mock Development Mode (Recommended)
+
+For UI development and testing without external dependencies:
+
+```bash
+# Uses .env.local with mock configuration
+# No Supabase or API keys needed
+# All features work with realistic demo data
+
+# Sign in with any email address to see mock data:
+# - Demo bands and shows
+# - Sample earnings data  
+# - AI assistant responses
+# - Full navigation and features
 ```
 
 ## Project Structure
