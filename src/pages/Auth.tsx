@@ -3,23 +3,47 @@ import { useAuth } from '@/contexts/AuthContext';
 import { cn } from '@/lib/utils';
 import { Mail, Music } from 'lucide-react';
 
+// Input validation utilities
+const validateEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email.trim());
+};
+
+const sanitizeEmail = (email: string): string => {
+  return email.trim().toLowerCase();
+};
+
 export default function AuthPage() {
   const { signInWithEmail, signInWithGoogle, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [emailError, setEmailError] = useState('');
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email) return;
+    setEmailError('');
+    setMessage('');
+    
+    if (!email) {
+      setEmailError('Email address is required');
+      return;
+    }
+
+    if (!validateEmail(email)) {
+      setEmailError('Please enter a valid email address');
+      return;
+    }
 
     try {
-      await signInWithEmail(email);
+      const sanitizedEmail = sanitizeEmail(email);
+      await signInWithEmail(sanitizedEmail);
       setIsSubmitted(true);
       setMessage('Check your email for a magic link to sign in!');
     } catch (error) {
       setMessage('Error sending magic link. Please try again.');
-      console.error('Auth error:', error);
+      // Don't expose detailed error information to client
+      console.warn('Auth error occurred');
     }
   };
 
@@ -69,18 +93,28 @@ export default function AuthPage() {
                       required
                       className={cn(
                         "appearance-none relative block w-full pl-12 pr-3 py-3",
-                        "border border-border placeholder-muted-foreground",
+                        "border placeholder-muted-foreground",
                         "text-foreground rounded-md focus:outline-none focus:ring-2",
-                        "focus:ring-primary focus:border-primary focus:z-10",
-                        "bg-background"
+                        "focus:z-10 bg-background",
+                        emailError 
+                          ? "border-red-500 focus:ring-red-500 focus:border-red-500"
+                          : "border-border focus:ring-primary focus:border-primary"
                       )}
                       placeholder="Enter your email address"
                       value={email}
-                      onChange={(e) => setEmail(e.target.value)}
+                      onChange={(e) => {
+                        setEmail(e.target.value);
+                        setEmailError(''); // Clear error on input
+                      }}
                       disabled={loading}
                     />
                   </div>
                 </div>
+                {emailError && (
+                  <div className="text-red-500 text-sm mt-1">
+                    {emailError}
+                  </div>
+                )}
 
                 <button
                   type="submit"
