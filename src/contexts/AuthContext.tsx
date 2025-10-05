@@ -38,8 +38,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     if (useMockData) {
-      // In mock mode, start as not authenticated
-      console.log('🧪 Mock mode: Starting with no authentication');
+      // Check if tests have set mock auth state
+      const mockAuthUser = localStorage.getItem('MOCK_AUTH_USER');
+      const isAuthenticated = localStorage.getItem('MOCK_AUTH_AUTHENTICATED') === 'true';
+      
+      if (isAuthenticated && mockAuthUser) {
+        console.log('🧪 Mock mode: Starting with authenticated user');
+        const user = JSON.parse(mockAuthUser) as User;
+        setUser(user);
+        fetchProfile(user.id);
+      } else {
+        console.log('🧪 Mock mode: Starting with no authentication');
+      }
+      
       setLoading(false);
       return;
     }

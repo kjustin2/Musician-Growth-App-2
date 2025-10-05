@@ -1,0 +1,118 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e10]: Demo User
+      - button "Sign out" [ref=e11] [cursor=pointer]:
+        - img [ref=e12] [cursor=pointer]
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - heading "Shows" [level=1] [ref=e21]
+          - paragraph [ref=e22]: The Demo Band performances
+        - button [ref=e23] [cursor=pointer]:
+          - img [ref=e24] [cursor=pointer]
+      - generic [ref=e27]:
+        - button "All Shows" [ref=e28] [cursor=pointer]
+        - button "planned" [ref=e29] [cursor=pointer]
+        - button "confirmed" [ref=e30] [cursor=pointer]
+        - button "completed" [ref=e31] [cursor=pointer]
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - generic [ref=e35]:
+            - generic [ref=e36]:
+              - heading "Friday Night Live" [level=3] [ref=e37]
+              - generic [ref=e39]: confirmed
+            - generic [ref=e40]:
+              - button [ref=e41] [cursor=pointer]:
+                - img [ref=e42] [cursor=pointer]
+              - button [ref=e45] [cursor=pointer]:
+                - img [ref=e46] [cursor=pointer]
+          - generic [ref=e49]:
+            - generic [ref=e50]:
+              - img [ref=e51]
+              - generic [ref=e54]: The Bluebird Cafe, Nashville, TN
+            - generic [ref=e55]:
+              - generic [ref=e56]:
+                - img [ref=e57]
+                - generic [ref=e59]: 12/14/2024
+              - generic [ref=e60]:
+                - img [ref=e61]
+                - generic [ref=e64]: 20:00
+            - generic [ref=e66]:
+              - img [ref=e67]
+              - paragraph [ref=e69]: "Earned: $3,750"
+        - generic [ref=e70]:
+          - generic [ref=e71]:
+            - generic [ref=e72]:
+              - heading "Saturday Night Show" [level=3] [ref=e73]
+              - generic [ref=e75]: planned
+            - generic [ref=e76]:
+              - button [ref=e77] [cursor=pointer]:
+                - img [ref=e78] [cursor=pointer]
+              - button [ref=e81] [cursor=pointer]:
+                - img [ref=e82] [cursor=pointer]
+          - generic [ref=e85]:
+            - generic [ref=e86]:
+              - img [ref=e87]
+              - generic [ref=e90]: Ryman Auditorium, Nashville, TN
+            - generic [ref=e91]:
+              - generic [ref=e92]:
+                - img [ref=e93]
+                - generic [ref=e95]: 12/19/2024
+              - generic [ref=e96]:
+                - img [ref=e97]
+                - generic [ref=e100]: 19:30
+        - generic [ref=e101]:
+          - generic [ref=e102]:
+            - generic [ref=e103]:
+              - heading "New Year's Eve Celebration" [level=3] [ref=e104]
+              - generic [ref=e106]: planned
+            - generic [ref=e107]:
+              - button [ref=e108] [cursor=pointer]:
+                - img [ref=e109] [cursor=pointer]
+              - button [ref=e112] [cursor=pointer]:
+                - img [ref=e113] [cursor=pointer]
+          - generic [ref=e116]:
+            - generic [ref=e117]:
+              - img [ref=e118]
+              - generic [ref=e121]: Grand Ole Opry, Nashville, TN
+            - generic [ref=e122]:
+              - generic [ref=e123]:
+                - img [ref=e124]
+                - generic [ref=e126]: 12/30/2024
+              - generic [ref=e127]:
+                - img [ref=e128]
+                - generic [ref=e131]: 21:00
+  - navigation [ref=e132]:
+    - generic [ref=e133]:
+      - link "Home" [ref=e134] [cursor=pointer]:
+        - /url: /
+        - img [ref=e135] [cursor=pointer]
+        - generic [ref=e138] [cursor=pointer]: Home
+      - link "Shows" [active] [ref=e139] [cursor=pointer]:
+        - /url: /shows
+        - img [ref=e140] [cursor=pointer]
+        - generic [ref=e142] [cursor=pointer]: Shows
+      - link "Earnings" [ref=e143] [cursor=pointer]:
+        - /url: /earnings
+        - img [ref=e144] [cursor=pointer]
+        - generic [ref=e146] [cursor=pointer]: Earnings
+      - link "AI" [ref=e147] [cursor=pointer]:
+        - /url: /assistant
+        - img [ref=e148] [cursor=pointer]
+        - generic [ref=e150] [cursor=pointer]: AI
+      - link "Apps" [ref=e151] [cursor=pointer]:
+        - /url: /integrations
+        - img [ref=e152] [cursor=pointer]
+        - generic [ref=e154] [cursor=pointer]: Apps
+      - link "Profile" [ref=e155] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e156] [cursor=pointer]
+        - generic [ref=e159] [cursor=pointer]: Profile
+```

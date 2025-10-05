@@ -1,65 +1,26 @@
-import { useState } from 'react';
-import { TrendingUp, DollarSign, Calendar, Music, Plus, Filter, ChevronDown, ChevronUp, Edit } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { TrendingUp, DollarSign, Calendar, Music, Plus, Filter, ChevronDown, ChevronUp, Edit, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useOrg } from '@/contexts/OrgContext';
+import { supabase } from '@/services/supabase';
+import AddEarningsModal from '@/components/AddEarningsModal';
 
-// Mock data for demonstration
 interface EarningsRecord {
   id: string;
   date: string;
   type: 'show' | 'streaming' | 'merchandise' | 'lessons' | 'other';
-  description: string;
+  description: string | null;
   amount: number;
-  venue?: string;
-  platform?: string;
-  notes?: string;
+  currency: string;
+  notes: string | null;
+  show?: {
+    id: string;
+    title: string | null;
+    venue: {
+      name: string;
+    };
+  } | null;
 }
-
-const mockEarnings: EarningsRecord[] = [
-  {
-    id: '1',
-    date: '2024-12-15',
-    type: 'show',
-    description: 'Friday Night Live - The Bluebird Cafe',
-    amount: 3750,
-    venue: 'The Bluebird Cafe',
-    notes: '150 tickets sold at $25 each'
-  },
-  {
-    id: '2',
-    date: '2024-12-10',
-    type: 'streaming',
-    description: 'Spotify Monthly Royalties',
-    amount: 248.50,
-    platform: 'Spotify',
-    notes: '50,000 streams this month'
-  },
-  {
-    id: '3',
-    date: '2024-12-08',
-    type: 'merchandise',
-    description: 'T-shirt and CD sales',
-    amount: 425,
-    notes: '15 t-shirts, 8 CDs sold at show'
-  },
-  {
-    id: '4',
-    date: '2024-12-05',
-    type: 'lessons',
-    description: 'Guitar lessons',
-    amount: 300,
-    notes: '6 lessons at $50 each'
-  },
-  {
-    id: '5',
-    date: '2024-12-01',
-    type: 'show',
-    description: 'Saturday Night Show - Ryman Auditorium',
-    amount: 8500,
-    venue: 'Ryman Auditorium',
-    notes: '200 tickets sold at $45 each minus venue fees'
-  },
-];
 
 const getTypeIcon = (type: EarningsRecord['type']) => {
   switch (type) {
@@ -93,11 +54,129 @@ const getTypeColor = (type: EarningsRecord['type']) => {
 
 export default function Earnings() {
   const { currentOrg } = useOrg();
-  const [earnings] = useState<EarningsRecord[]>(mockEarnings);
+  const [earnings, setEarnings] = useState<EarningsRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [filterType, setFilterType] = useState<'all' | EarningsRecord['type']>('all');
   const [showFilters, setShowFilters] = useState(false);
   const [isAddEarningOpen, setIsAddEarningOpen] = useState(false);
   const [selectedTimeframe, setSelectedTimeframe] = useState<'week' | 'month' | 'year'>('month');
+
+  const useMockData = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
+  // Mock earnings data
+  const mockEarnings: EarningsRecord[] = [
+    {
+      id: '1',
+      date: '2024-12-15',
+      type: 'show',
+      description: 'Friday Night Live - The Bluebird Cafe',
+      amount: 3750,
+      currency: 'USD',
+      notes: '150 tickets sold at $25 each',
+      show: {
+        id: 'show-1',
+        title: 'Friday Night Live',
+        venue: { name: 'The Bluebird Cafe' }
+      }
+    },
+    {
+      id: '2',
+      date: '2024-12-10',
+      type: 'streaming',
+      description: 'Spotify Monthly Royalties',
+      amount: 248.50,
+      currency: 'USD',
+      notes: '50,000 streams this month',
+      show: null
+    },
+    {
+      id: '3',
+      date: '2024-12-08',
+      type: 'merchandise',
+      description: 'T-shirt and CD sales',
+      amount: 425,
+      currency: 'USD',
+      notes: '15 t-shirts, 8 CDs sold at show',
+      show: null
+    },
+    {
+      id: '4',
+      date: '2024-12-05',
+      type: 'lessons',
+      description: 'Guitar lessons',
+      amount: 300,
+      currency: 'USD',
+      notes: '6 lessons at $50 each',
+      show: null
+    },
+    {
+      id: '5',
+      date: '2024-12-01',
+      type: 'show',
+      description: 'Saturday Night Show - Ryman Auditorium',
+      amount: 8500,
+      currency: 'USD',
+      notes: '200 tickets sold at $45 each minus venue fees',
+      show: {
+        id: 'show-2',
+        title: 'Saturday Night Show',
+        venue: { name: 'Ryman Auditorium' }
+      }
+    }
+  ];
+
+  // Fetch earnings from database or use mock data
+  const fetchEarnings = async () => {
+    if (!currentOrg) return;
+    
+    setLoading(true);
+    setError('');
+    
+    try {
+      if (useMockData) {
+        console.log('🧪 Mock: Loading earnings for', currentOrg.name);
+        await new Promise(resolve => setTimeout(resolve, 600)); // Simulate loading
+        setEarnings(mockEarnings);
+        setLoading(false);
+        return;
+      }
+
+      const { data, error: fetchError } = await supabase
+        .from('earnings')
+        .select(`
+          id,
+          date,
+          type,
+          description,
+          amount,
+          currency,
+          notes,
+          show:shows(
+            id,
+            title,
+            venue:venues(
+              name
+            )
+          )
+        `)
+        .eq('org_id', currentOrg.id)
+        .order('date', { ascending: false });
+
+      if (fetchError) throw fetchError;
+      
+      setEarnings(data as any || []);
+    } catch (err: any) {
+      console.error('Error fetching earnings:', err);
+      setError(err.message || 'Failed to load earnings');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchEarnings();
+  }, [currentOrg]);
 
   const filteredEarnings = earnings.filter(earning => 
     filterType === 'all' || earning.type === filterType
@@ -246,7 +325,25 @@ export default function Earnings() {
         </div>
 
         {/* Earnings List */}
-        {sortedEarnings.length === 0 ? (
+        {loading ? (
+          <div className="flex items-center justify-center py-16">
+            <Loader2 className="h-8 w-8 text-primary animate-spin" />
+          </div>
+        ) : error ? (
+          <div className="text-center py-16">
+            <p className="text-red-600 dark:text-red-400 mb-2">{error}</p>
+            <button
+              onClick={fetchEarnings}
+              className={cn(
+                "px-4 py-2 bg-primary text-primary-foreground rounded-md",
+                "hover:bg-primary/90 focus:outline-none focus:ring-2",
+                "focus:ring-offset-2 focus:ring-primary"
+              )}
+            >
+              Try Again
+            </button>
+          </div>
+        ) : sortedEarnings.length === 0 ? (
           <div className="text-center py-16">
             <DollarSign className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <p className="text-foreground font-medium mb-2">
@@ -285,7 +382,7 @@ export default function Earnings() {
                         </span>
                       </div>
                       <h3 className="font-semibold text-foreground mb-1">
-                        {earning.description}
+                        {earning.description || 'Untitled earning'}
                       </h3>
                       <p className="text-sm text-muted-foreground">
                         {new Date(earning.date).toLocaleDateString()}
@@ -302,16 +399,11 @@ export default function Earnings() {
                   </div>
 
                   {/* Additional Details */}
-                  {(earning.venue || earning.platform || earning.notes) && (
+                  {(earning.show || earning.notes) && (
                     <div className="text-sm space-y-1">
-                      {earning.venue && (
+                      {earning.show && (
                         <p className="text-muted-foreground">
-                          <span className="font-medium">Venue:</span> {earning.venue}
-                        </p>
-                      )}
-                      {earning.platform && (
-                        <p className="text-muted-foreground">
-                          <span className="font-medium">Platform:</span> {earning.platform}
+                          <span className="font-medium">Show:</span> {earning.show.title || earning.show.venue.name}
                         </p>
                       )}
                       {earning.notes && (
@@ -328,34 +420,14 @@ export default function Earnings() {
         )}
       </div>
 
-      {/* Add Earning Modal Placeholder */}
-      {isAddEarningOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setIsAddEarningOpen(false)} />
-          <div className="relative bg-card rounded-lg shadow-lg w-full max-w-md mx-4 p-6">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Add New Earning</h2>
-            <p className="text-muted-foreground mb-4">
-              Earnings entry form would go here. This will include:
-            </p>
-            <ul className="text-sm text-muted-foreground space-y-1 mb-6">
-              <li>• Earning type selection (show, streaming, merchandise, etc.)</li>
-              <li>• Amount and date</li>
-              <li>• Description and venue/platform</li>
-              <li>• Optional notes and attachments</li>
-              <li>• Tax category classification</li>
-            </ul>
-            <button
-              onClick={() => setIsAddEarningOpen(false)}
-              className={cn(
-                "w-full bg-primary text-primary-foreground py-2 rounded-md",
-                "hover:bg-primary/90 focus:outline-none focus:ring-2",
-                "focus:ring-offset-2 focus:ring-primary"
-              )}
-            >
-              Close (Form Coming Soon)
-            </button>
-          </div>
-        </div>
+      {/* Add Earning Modal */}
+      {currentOrg && (
+        <AddEarningsModal
+          isOpen={isAddEarningOpen}
+          onClose={() => setIsAddEarningOpen(false)}
+          orgId={currentOrg.id}
+          onEarningAdded={fetchEarnings}
+        />
       )}
     </div>
   );

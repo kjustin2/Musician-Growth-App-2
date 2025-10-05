@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Settings, Cloud, Calendar, Music, Share2, MapPin, Download, ExternalLink, Unplug } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useOrg } from '@/contexts/OrgContext';
+import ExportTools from '@/components/integrations/ExportTools';
 
 interface Integration {
   id: string;
@@ -99,6 +100,7 @@ export default function Integrations() {
   const { currentOrg } = useOrg();
   const [selectedCategory, setSelectedCategory] = useState<'all' | Integration['category']>('all');
   const [connectedIntegrations, setConnectedIntegrations] = useState<string[]>([]);
+  const [isExportToolsOpen, setIsExportToolsOpen] = useState(false);
 
   const categories = ['all', 'calendar', 'social', 'music', 'location', 'weather', 'analytics'] as const;
   
@@ -107,6 +109,11 @@ export default function Integrations() {
   );
 
   const handleConnect = (integrationId: string) => {
+    if (integrationId === 'export_tools') {
+      setIsExportToolsOpen(true);
+      return;
+    }
+
     if (connectedIntegrations.includes(integrationId)) {
       setConnectedIntegrations(prev => prev.filter(id => id !== integrationId));
     } else {
@@ -114,17 +121,10 @@ export default function Integrations() {
     }
   };
 
-  if (!currentOrg) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <div className="text-center">
-          <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-          <p className="text-foreground font-medium">Create a band first</p>
-          <p className="text-sm text-muted-foreground">You need to create a band to manage integrations</p>
-        </div>
-      </div>
-    );
-  }
+  // Only require org for integrations that need it (social, music, calendar)
+  const requiresOrg = (integration: Integration) => {
+    return ['calendar', 'social', 'music'].includes(integration.category);
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +133,9 @@ export default function Integrations() {
         <div className="max-w-md mx-auto">
           <h1 className="text-2xl font-bold text-foreground">Integrations</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Connect {currentOrg.name} with external services
+            {currentOrg 
+              ? `Connect ${currentOrg.name} with external services`
+              : 'Connect with external services (some require a band)'}
           </p>
         </div>
       </header>
@@ -196,9 +198,12 @@ export default function Integrations() {
                   {integration.status === 'available' && (
                     <button
                       onClick={() => handleConnect(integration.id)}
+                      disabled={requiresOrg(integration) && !currentOrg}
                       className={cn(
                         "flex items-center space-x-1 px-3 py-1 text-sm rounded-md transition-colors",
-                        isConnected
+                        requiresOrg(integration) && !currentOrg
+                          ? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800"
+                          : isConnected
                           ? "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900 dark:text-green-100"
                           : "bg-primary text-primary-foreground hover:bg-primary/90"
                       )}
@@ -211,7 +216,14 @@ export default function Integrations() {
                       ) : (
                         <>
                           <ExternalLink className="h-4 w-4" />
-                          <span>Connect</span>
+                          <span>
+                            {requiresOrg(integration) && !currentOrg 
+                              ? 'Requires Band' 
+                              : integration.id === 'export_tools'
+                              ? 'Use'
+                              : 'Connect'
+                            }
+                          </span>
                         </>
                       )}
                     </button>
@@ -261,6 +273,12 @@ export default function Integrations() {
           </div>
         )}
       </div>
+
+      {/* Export Tools Modal */}
+      <ExportTools 
+        isOpen={isExportToolsOpen} 
+        onClose={() => setIsExportToolsOpen(false)} 
+      />
     </div>
   );
 }

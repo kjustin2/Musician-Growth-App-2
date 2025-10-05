@@ -1,0 +1,78 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e10]: Demo User
+      - button "Sign out" [ref=e11] [cursor=pointer]:
+        - img [ref=e12] [cursor=pointer]
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e18]:
+        - heading "Profile & Settings" [level=1] [ref=e19]
+        - paragraph [ref=e20]: Manage your account and band
+      - generic [ref=e23]:
+        - button "Account" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25] [cursor=pointer]:
+            - img [ref=e26] [cursor=pointer]
+            - generic [ref=e29] [cursor=pointer]: Account
+        - button "Band" [active] [ref=e30] [cursor=pointer]:
+          - generic [ref=e31] [cursor=pointer]:
+            - img [ref=e32] [cursor=pointer]
+            - generic [ref=e35] [cursor=pointer]: Band
+      - generic [ref=e37]:
+        - generic [ref=e38]:
+          - heading "Current Band" [level=2] [ref=e39]
+          - generic [ref=e40]:
+            - img [ref=e42]
+            - generic [ref=e45]:
+              - heading "The Demo Band" [level=3] [ref=e46]
+              - paragraph [ref=e47]: A demo band for testing ChordLine
+          - generic [ref=e48]:
+            - button "Manage Members" [ref=e49] [cursor=pointer]:
+              - img [ref=e50] [cursor=pointer]
+              - generic [ref=e55] [cursor=pointer]: Manage Members
+            - button "Band Settings" [ref=e56] [cursor=pointer]:
+              - img [ref=e57] [cursor=pointer]
+              - generic [ref=e60] [cursor=pointer]: Band Settings
+        - generic [ref=e61]:
+          - heading "Your Bands (2)" [level=2] [ref=e62]
+          - generic [ref=e63]:
+            - generic [ref=e65]:
+              - img [ref=e66]
+              - generic [ref=e69]:
+                - paragraph [ref=e70]: The Demo Band
+                - paragraph [ref=e71]: Active
+            - generic [ref=e73]:
+              - img [ref=e74]
+              - paragraph [ref=e78]: Acoustic Vibes
+  - navigation [ref=e79]:
+    - generic [ref=e80]:
+      - link "Home" [ref=e81] [cursor=pointer]:
+        - /url: /
+        - img [ref=e82] [cursor=pointer]
+        - generic [ref=e85] [cursor=pointer]: Home
+      - link "Shows" [ref=e86] [cursor=pointer]:
+        - /url: /shows
+        - img [ref=e87] [cursor=pointer]
+        - generic [ref=e89] [cursor=pointer]: Shows
+      - link "Earnings" [ref=e90] [cursor=pointer]:
+        - /url: /earnings
+        - img [ref=e91] [cursor=pointer]
+        - generic [ref=e93] [cursor=pointer]: Earnings
+      - link "AI" [ref=e94] [cursor=pointer]:
+        - /url: /assistant
+        - img [ref=e95] [cursor=pointer]
+        - generic [ref=e97] [cursor=pointer]: AI
+      - link "Apps" [ref=e98] [cursor=pointer]:
+        - /url: /integrations
+        - img [ref=e99] [cursor=pointer]
+        - generic [ref=e101] [cursor=pointer]: Apps
+      - link "Profile" [ref=e102] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e103] [cursor=pointer]
+        - generic [ref=e106] [cursor=pointer]: Profile
+```

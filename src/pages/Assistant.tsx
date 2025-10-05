@@ -95,9 +95,9 @@ export default function Assistant() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="bg-card border-b border-border px-4 py-4">
+      <header className="bg-card border-b border-border px-4 py-4 flex-shrink-0">
         <div className="max-w-md mx-auto">
           <div className="flex items-center space-x-2">
             <div className="bg-primary/10 p-2 rounded-lg">
@@ -114,7 +114,7 @@ export default function Assistant() {
       </header>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto" style={{ minHeight: 0 }}>
         <div className="max-w-md mx-auto px-4 py-4 space-y-4">
           {messages.map((message) => (
             <div key={message.id} className="space-y-2">
@@ -193,7 +193,7 @@ export default function Assistant() {
       </div>
 
       {/* Input */}
-      <div className="bg-card border-t border-border">
+      <div className="bg-card border-t border-border flex-shrink-0">
         <div className="max-w-md mx-auto p-4">
           <div className="flex space-x-2">
             <input

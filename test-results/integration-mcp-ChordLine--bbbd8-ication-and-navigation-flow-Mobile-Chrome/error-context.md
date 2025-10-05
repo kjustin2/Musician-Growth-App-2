@@ -1,0 +1,149 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e10]: Demo User
+      - button "Sign out" [ref=e11] [cursor=pointer]:
+        - img [ref=e12] [cursor=pointer]
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e19]:
+        - generic [ref=e20]:
+          - heading "Earnings" [level=1] [ref=e21]
+          - paragraph [ref=e22]: The Demo Band revenue tracking
+        - button [ref=e23] [cursor=pointer]:
+          - img [ref=e24] [cursor=pointer]
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]:
+            - generic [ref=e28]:
+              - img [ref=e29]
+              - generic [ref=e31]: Total Earnings
+            - paragraph [ref=e32]: $13,223.5
+          - generic [ref=e33]:
+            - generic [ref=e34]:
+              - generic [ref=e35]:
+                - img [ref=e36]
+                - generic [ref=e38]: This month
+              - button [ref=e39] [cursor=pointer]:
+                - img [ref=e40] [cursor=pointer]
+            - paragraph [ref=e42]: $0
+        - button "Filter by type" [ref=e44] [cursor=pointer]:
+          - img [ref=e45] [cursor=pointer]
+          - generic [ref=e47] [cursor=pointer]: Filter by type
+          - img [ref=e48] [cursor=pointer]
+        - generic [ref=e50]:
+          - generic [ref=e51]:
+            - generic [ref=e52]:
+              - generic [ref=e53]:
+                - generic [ref=e54]:
+                  - img [ref=e55]
+                  - generic [ref=e59]: show
+                - heading "Friday Night Live - The Bluebird Cafe" [level=3] [ref=e60]
+                - paragraph [ref=e61]: 12/14/2024
+              - generic [ref=e62]:
+                - paragraph [ref=e63]: +$3,750
+                - button [ref=e64] [cursor=pointer]:
+                  - img [ref=e65] [cursor=pointer]
+            - generic [ref=e68]:
+              - paragraph [ref=e69]:
+                - generic [ref=e70]: "Show:"
+                - text: Friday Night Live
+              - paragraph [ref=e71]:
+                - generic [ref=e72]: "Notes:"
+                - text: 150 tickets sold at $25 each
+          - generic [ref=e73]:
+            - generic [ref=e74]:
+              - generic [ref=e75]:
+                - generic [ref=e76]:
+                  - img [ref=e77]
+                  - generic [ref=e80]: streaming
+                - heading "Spotify Monthly Royalties" [level=3] [ref=e81]
+                - paragraph [ref=e82]: 12/9/2024
+              - generic [ref=e83]:
+                - paragraph [ref=e84]: +$248.5
+                - button [ref=e85] [cursor=pointer]:
+                  - img [ref=e86] [cursor=pointer]
+            - paragraph [ref=e90]:
+              - generic [ref=e91]: "Notes:"
+              - text: 50,000 streams this month
+          - generic [ref=e92]:
+            - generic [ref=e93]:
+              - generic [ref=e94]:
+                - generic [ref=e95]:
+                  - img [ref=e96]
+                  - generic [ref=e98]: merchandise
+                - heading "T-shirt and CD sales" [level=3] [ref=e99]
+                - paragraph [ref=e100]: 12/7/2024
+              - generic [ref=e101]:
+                - paragraph [ref=e102]: +$425
+                - button [ref=e103] [cursor=pointer]:
+                  - img [ref=e104] [cursor=pointer]
+            - paragraph [ref=e108]:
+              - generic [ref=e109]: "Notes:"
+              - text: 15 t-shirts, 8 CDs sold at show
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - generic [ref=e112]:
+                - generic [ref=e113]:
+                  - img [ref=e114]
+                  - generic [ref=e118]: lessons
+                - heading "Guitar lessons" [level=3] [ref=e119]
+                - paragraph [ref=e120]: 12/4/2024
+              - generic [ref=e121]:
+                - paragraph [ref=e122]: +$300
+                - button [ref=e123] [cursor=pointer]:
+                  - img [ref=e124] [cursor=pointer]
+            - paragraph [ref=e128]:
+              - generic [ref=e129]: "Notes:"
+              - text: 6 lessons at $50 each
+          - generic [ref=e130]:
+            - generic [ref=e131]:
+              - generic [ref=e132]:
+                - generic [ref=e133]:
+                  - img [ref=e134]
+                  - generic [ref=e138]: show
+                - heading "Saturday Night Show - Ryman Auditorium" [level=3] [ref=e139]
+                - paragraph [ref=e140]: 11/30/2024
+              - generic [ref=e141]:
+                - paragraph [ref=e142]: +$8,500
+                - button [ref=e143] [cursor=pointer]:
+                  - img [ref=e144] [cursor=pointer]
+            - generic [ref=e147]:
+              - paragraph [ref=e148]:
+                - generic [ref=e149]: "Show:"
+                - text: Saturday Night Show
+              - paragraph [ref=e150]:
+                - generic [ref=e151]: "Notes:"
+                - text: 200 tickets sold at $45 each minus venue fees
+  - navigation [ref=e152]:
+    - generic [ref=e153]:
+      - link "Home" [ref=e154] [cursor=pointer]:
+        - /url: /
+        - img [ref=e155] [cursor=pointer]
+        - generic [ref=e158] [cursor=pointer]: Home
+      - link "Shows" [ref=e159] [cursor=pointer]:
+        - /url: /shows
+        - img [ref=e160] [cursor=pointer]
+        - generic [ref=e162] [cursor=pointer]: Shows
+      - link "Earnings" [active] [ref=e163] [cursor=pointer]:
+        - /url: /earnings
+        - img [ref=e164] [cursor=pointer]
+        - generic [ref=e166] [cursor=pointer]: Earnings
+      - link "AI" [ref=e167] [cursor=pointer]:
+        - /url: /assistant
+        - img [ref=e168] [cursor=pointer]
+        - generic [ref=e170] [cursor=pointer]: AI
+      - link "Apps" [ref=e171] [cursor=pointer]:
+        - /url: /integrations
+        - img [ref=e172] [cursor=pointer]
+        - generic [ref=e174] [cursor=pointer]: Apps
+      - link "Profile" [ref=e175] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e176] [cursor=pointer]
+        - generic [ref=e179] [cursor=pointer]: Profile
+```

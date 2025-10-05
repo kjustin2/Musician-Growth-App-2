@@ -1,0 +1,179 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - img [ref=e7]
+        - generic [ref=e10]: Demo User
+      - button "Sign out" [ref=e11] [cursor=pointer]:
+        - img [ref=e12] [cursor=pointer]
+  - main [ref=e15]:
+    - generic [ref=e16]:
+      - generic [ref=e18]:
+        - heading "Integrations" [level=1] [ref=e19]
+        - paragraph [ref=e20]: Connect The Demo Band with external services
+      - generic [ref=e23]:
+        - button "All" [ref=e24] [cursor=pointer]:
+          - generic [ref=e25] [cursor=pointer]: All
+        - button "calendar" [ref=e26] [cursor=pointer]:
+          - img [ref=e27] [cursor=pointer]
+          - generic [ref=e29] [cursor=pointer]: calendar
+        - button "social" [ref=e30] [cursor=pointer]:
+          - img [ref=e31] [cursor=pointer]
+          - generic [ref=e37] [cursor=pointer]: social
+        - button "music" [ref=e38] [cursor=pointer]:
+          - img [ref=e39] [cursor=pointer]
+          - generic [ref=e43] [cursor=pointer]: music
+        - button "location" [ref=e44] [cursor=pointer]:
+          - img [ref=e45] [cursor=pointer]
+          - generic [ref=e48] [cursor=pointer]: location
+        - button "weather" [ref=e49] [cursor=pointer]:
+          - img [ref=e50] [cursor=pointer]
+          - generic [ref=e52] [cursor=pointer]: weather
+        - button "analytics" [ref=e53] [cursor=pointer]:
+          - img [ref=e54] [cursor=pointer]
+          - generic [ref=e57] [cursor=pointer]: analytics
+      - generic [ref=e59]:
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - img [ref=e64]
+              - generic [ref=e66]:
+                - heading "Google Calendar" [level=3] [ref=e67]
+                - generic [ref=e68]: Available
+            - button "Connect" [ref=e69] [cursor=pointer]:
+              - img [ref=e70] [cursor=pointer]
+              - generic [ref=e74] [cursor=pointer]: Connect
+          - paragraph [ref=e75]: Sync your shows with Google Calendar for better scheduling
+          - generic [ref=e76]:
+            - paragraph [ref=e77]: "Features:"
+            - list [ref=e78]:
+              - listitem [ref=e79]:
+                - generic [ref=e81]: Auto-sync show dates
+              - listitem [ref=e82]:
+                - generic [ref=e84]: Calendar reminders
+              - listitem [ref=e85]:
+                - generic [ref=e87]: Venue information in events
+        - generic [ref=e88]:
+          - generic [ref=e90]:
+            - img [ref=e92]
+            - generic [ref=e96]:
+              - heading "Spotify for Artists" [level=3] [ref=e97]
+              - generic [ref=e98]: Coming Soon
+          - paragraph [ref=e99]: Track streaming stats and manage your artist profile
+          - generic [ref=e100]:
+            - paragraph [ref=e101]: "Features:"
+            - list [ref=e102]:
+              - listitem [ref=e103]:
+                - generic [ref=e105]: Streaming analytics
+              - listitem [ref=e106]:
+                - generic [ref=e108]: Playlist management
+              - listitem [ref=e109]:
+                - generic [ref=e111]: Fan demographics
+          - paragraph [ref=e113]: This integration is coming soon! We'll notify you when it's ready.
+        - generic [ref=e114]:
+          - generic [ref=e116]:
+            - img [ref=e118]
+            - generic [ref=e124]:
+              - heading "Instagram" [level=3] [ref=e125]
+              - generic [ref=e126]: Coming Soon
+          - paragraph [ref=e127]: Share show updates and earnings milestones
+          - generic [ref=e128]:
+            - paragraph [ref=e129]: "Features:"
+            - list [ref=e130]:
+              - listitem [ref=e131]:
+                - generic [ref=e133]: Auto-post show announcements
+              - listitem [ref=e134]:
+                - generic [ref=e136]: Story templates
+              - listitem [ref=e137]:
+                - generic [ref=e139]: Hashtag suggestions
+          - paragraph [ref=e141]: This integration is coming soon! We'll notify you when it's ready.
+        - generic [ref=e142]:
+          - generic [ref=e143]:
+            - generic [ref=e144]:
+              - img [ref=e146]
+              - generic [ref=e149]:
+                - heading "Google Places" [level=3] [ref=e150]
+                - generic [ref=e151]: Available
+            - button "Connect" [ref=e152] [cursor=pointer]:
+              - img [ref=e153] [cursor=pointer]
+              - generic [ref=e157] [cursor=pointer]: Connect
+          - paragraph [ref=e158]: Find and verify venue information automatically
+          - generic [ref=e159]:
+            - paragraph [ref=e160]: "Features:"
+            - list [ref=e161]:
+              - listitem [ref=e162]:
+                - generic [ref=e164]: Venue search
+              - listitem [ref=e165]:
+                - generic [ref=e167]: Address validation
+              - listitem [ref=e168]:
+                - generic [ref=e170]: Contact information
+        - generic [ref=e171]:
+          - generic [ref=e172]:
+            - generic [ref=e173]:
+              - img [ref=e175]
+              - generic [ref=e177]:
+                - heading "OpenWeatherMap" [level=3] [ref=e178]
+                - generic [ref=e179]: Available
+            - button "Connect" [ref=e180] [cursor=pointer]:
+              - img [ref=e181] [cursor=pointer]
+              - generic [ref=e185] [cursor=pointer]: Connect
+          - paragraph [ref=e186]: Get weather forecasts for your show dates
+          - generic [ref=e187]:
+            - paragraph [ref=e188]: "Features:"
+            - list [ref=e189]:
+              - listitem [ref=e190]:
+                - generic [ref=e192]: 7-day forecasts
+              - listitem [ref=e193]:
+                - generic [ref=e195]: Weather alerts
+              - listitem [ref=e196]:
+                - generic [ref=e198]: Indoor/outdoor recommendations
+        - generic [ref=e199]:
+          - generic [ref=e200]:
+            - generic [ref=e201]:
+              - img [ref=e203]
+              - generic [ref=e206]:
+                - heading "Export Tools" [level=3] [ref=e207]
+                - generic [ref=e208]: Available
+            - button "Use" [ref=e209] [cursor=pointer]:
+              - img [ref=e210] [cursor=pointer]
+              - generic [ref=e214] [cursor=pointer]: Use
+          - paragraph [ref=e215]: Export your data to various formats for tax reporting
+          - generic [ref=e216]:
+            - paragraph [ref=e217]: "Features:"
+            - list [ref=e218]:
+              - listitem [ref=e219]:
+                - generic [ref=e221]: CSV exports
+              - listitem [ref=e222]:
+                - generic [ref=e224]: PDF reports
+              - listitem [ref=e225]:
+                - generic [ref=e227]: Tax-ready formatting
+  - navigation [ref=e228]:
+    - generic [ref=e229]:
+      - link "Home" [ref=e230] [cursor=pointer]:
+        - /url: /
+        - img [ref=e231] [cursor=pointer]
+        - generic [ref=e234] [cursor=pointer]: Home
+      - link "Shows" [ref=e235] [cursor=pointer]:
+        - /url: /shows
+        - img [ref=e236] [cursor=pointer]
+        - generic [ref=e238] [cursor=pointer]: Shows
+      - link "Earnings" [ref=e239] [cursor=pointer]:
+        - /url: /earnings
+        - img [ref=e240] [cursor=pointer]
+        - generic [ref=e242] [cursor=pointer]: Earnings
+      - link "AI" [ref=e243] [cursor=pointer]:
+        - /url: /assistant
+        - img [ref=e244] [cursor=pointer]
+        - generic [ref=e246] [cursor=pointer]: AI
+      - link "Apps" [active] [ref=e247] [cursor=pointer]:
+        - /url: /integrations
+        - img [ref=e248] [cursor=pointer]
+        - generic [ref=e250] [cursor=pointer]: Apps
+      - link "Profile" [ref=e251] [cursor=pointer]:
+        - /url: /profile
+        - img [ref=e252] [cursor=pointer]
+        - generic [ref=e255] [cursor=pointer]: Profile
+```
