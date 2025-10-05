@@ -9,8 +9,8 @@ import Dashboard from '@/pages/Dashboard';
 import Shows from '@/pages/Shows';
 import Earnings from '@/pages/Earnings';
 import Assistant from '@/pages/Assistant';
-import Integrations from '@/pages/Integrations';
 import Profile from '@/pages/Profile';
+import CalendarEmbed from '@/pages/CalendarEmbed';
 import AuthPage from '@/pages/Auth';
 
 const queryClient = new QueryClient();
@@ -37,7 +37,7 @@ function App() {
               <Route path="shows" element={<Shows />} />
               <Route path="earnings" element={<Earnings />} />
               <Route path="assistant" element={<Assistant />} />
-              <Route path="integrations" element={<Integrations />} />
+              <Route path="calendar/google" element={<CalendarEmbed />} />
               <Route path="profile" element={<Profile />} />
             </Route>
           </Routes>

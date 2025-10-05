@@ -104,10 +104,13 @@ Start-Process PowerShell -ArgumentList '-NoExit', '-Command', 'npm run dev' -Pas
 # 1. Open DevTools > Application > Manifest
 # 2. Click "Install" or use browser's install prompt
 
-# Run Playwright tests
-npm run test         # Headless tests
-npm run test:ui      # Interactive testing UI (background recommended)
-npm run test:headed  # Tests in browser
+# Interactive Testing with Browser MCP
+# Use Warp's browser MCP tools to inspect and test the application:
+# - Navigate to pages and inspect UI elements
+# - Take screenshots to verify functionality
+# - Test user flows interactively
+# - Debug issues in real-time
+# This approach is more efficient than maintaining integration tests
 ```
 
 ### 📝 Mock Development Mode (Recommended)
@@ -246,6 +249,52 @@ Target monthly costs for ≤5 users:
 - Other APIs: $0 (free tiers)
 
 **Total: ~$5/month maximum**
+
+## Browser MCP Testing Strategy
+
+### Interactive Testing Approach
+Instead of maintaining complex integration tests, we use Warp's browser MCP tools for efficient testing:
+
+1. **Navigation Testing**
+   ```bash
+   # Start dev server
+   npm run dev
+   
+   # Use browser MCP to navigate and inspect:
+   # - browser_navigate to visit pages
+   # - browser_snapshot to capture UI state
+   # - browser_click to interact with elements
+   # - browser_type to fill forms
+   # - browser_take_screenshot for visual verification
+   ```
+
+2. **Feature Verification**
+   - **Authentication Flow**: Test Google sign-in and magic links
+   - **Calendar Integration**: Verify calendar display and weather data
+   - **Profile Connections**: Test Google Calendar and future integrations
+   - **AI Assistant**: Validate social caption generation requests
+   - **Navigation**: Confirm all routes work and Integrations tab is removed
+
+3. **Mobile Responsiveness**
+   - Use `browser_resize` to test different viewport sizes
+   - Verify touch-friendly interface on mobile dimensions
+   - Test PWA installation flow
+
+4. **Debugging Benefits**
+   - Real-time inspection of UI elements
+   - Interactive debugging without test maintenance
+   - Visual confirmation of features
+   - Faster iteration cycles
+
+### Testing Checklist
+- [ ] Authentication (Google OAuth)
+- [ ] Dashboard calendar with stats
+- [ ] Profile > Connections tab
+- [ ] AI Assistant chat interface
+- [ ] Mobile navigation and responsiveness
+- [ ] PWA installation capability
+- [ ] Weather integration display
+- [ ] All routes accessible (no broken links)
 
 ## Future Upgrade Path (Post-Phase 0)
 - Offline-first architecture with sync

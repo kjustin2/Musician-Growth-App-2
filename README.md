@@ -91,7 +91,7 @@ npm run dev
 - **Real-time subscriptions** - Live data updates
 
 ### **Testing & Quality**
-- **Playwright** - End-to-end testing
+- **Browser MCP** - Interactive testing via Warp's browser tools
 - **ESLint** - Code linting
 - **TypeScript** - Static type checking
 - **Prettier** - Code formatting
@@ -112,9 +112,7 @@ npm run preview      # Preview production build
 # Quality & Testing
 npm run lint         # ESLint checking
 npm run type-check   # TypeScript validation
-npm run test         # Playwright E2E tests
-npm run test:ui      # Playwright with UI
-npm run test:headed  # Playwright in browser
+# Interactive testing via Warp's browser MCP tools
 
 # Database (with Supabase CLI)
 npm run supabase:start    # Start local Supabase
@@ -233,13 +231,13 @@ We welcome contributions! Here's how:
 
 1. **Fork** the repository
 2. **Create** a feature branch
-3. **Write** tests for new features
-4. **Ensure** all tests pass
+3. **Test** features using browser MCP tools
+4. **Ensure** code quality passes
 5. **Submit** a pull request
 
 ### **Development Guidelines**
 - Follow TypeScript best practices
-- Write comprehensive tests
+- Test features interactively with browser MCP tools
 - Maintain mobile-first design principles
 - Use semantic commit messages
 - Update documentation for new features

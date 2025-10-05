@@ -8,7 +8,6 @@ const tabs = [
   { id: 'shows', label: 'Shows', icon: Calendar, href: '/shows' },
   { id: 'earnings', label: 'Earnings', icon: DollarSign, href: '/earnings' },
   { id: 'assistant', label: 'AI', icon: MessageCircle, href: '/assistant' },
-  { id: 'integrations', label: 'Apps', icon: Plug, href: '/integrations' },
   { id: 'profile', label: 'Profile', icon: Settings, href: '/profile' },
 ];
 

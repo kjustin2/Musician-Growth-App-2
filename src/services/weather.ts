@@ -210,6 +210,65 @@ class WeatherService {
     return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
   }
 
+  // Batch fetch weather for multiple shows (for calendar view)
+  async getWeatherForShows(shows: Array<{ id: string; date: string; venue?: { city?: string; name?: string } }>): Promise<Record<string, ProcessedWeatherData | null>> {
+    const weatherData: Record<string, ProcessedWeatherData | null> = {};
+    
+    // Group shows by city to minimize API calls
+    const showsByCity: Record<string, Array<{ id: string; date: string }>> = {};
+    
+    for (const show of shows) {
+      // Extract city from venue info or use default
+      const city = show.venue?.city || 'Nashville'; // Default city
+      if (!showsByCity[city]) {
+        showsByCity[city] = [];
+      }
+      showsByCity[city].push({ id: show.id, date: show.date });
+    }
+    
+    // Fetch weather for each city
+    for (const [city, cityShows] of Object.entries(showsByCity)) {
+      for (const show of cityShows) {
+        try {
+          const weather = await this.getWeatherForShow(city, show.date);
+          weatherData[show.id] = weather;
+        } catch (error) {
+          console.error(`Error fetching weather for show ${show.id}:`, error);
+          weatherData[show.id] = null;
+        }
+        
+        // Add small delay to avoid rate limiting
+        if (!this.useMockData) {
+          await new Promise(resolve => setTimeout(resolve, 100));
+        }
+      }
+    }
+    
+    return weatherData;
+  }
+
+  // Get weather for calendar display (simplified format)
+  async getWeatherForCalendar(shows: Array<{ id: string; date: string; venue?: { city?: string; name?: string } }>): Promise<Array<{ date: string; temperature: number; condition: string; icon: string; humidity?: number; windSpeed?: number }>> {
+    const weatherMap = await this.getWeatherForShows(shows);
+    const calendarWeather: Array<{ date: string; temperature: number; condition: string; icon: string; humidity?: number; windSpeed?: number }> = [];
+    
+    for (const show of shows) {
+      const weather = weatherMap[show.id];
+      if (weather) {
+        calendarWeather.push({
+          date: weather.date,
+          temperature: weather.temperature,
+          condition: weather.condition,
+          icon: weather.icon,
+          humidity: weather.humidity,
+          windSpeed: weather.windSpeed
+        });
+      }
+    }
+    
+    return calendarWeather;
+  }
+
   getOutdoorRecommendation(weather: ProcessedWeatherData): string {
     if (weather.isOutdoorFriendly) {
       return 'Great weather for outdoor performances! 🌤️';

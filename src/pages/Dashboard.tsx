@@ -3,9 +3,37 @@ import { Plus, Calendar, MessageCircle, CloudSun, Music2, ChevronDown, DollarSig
 import { cn } from '@/lib/utils';
 import { useOrg } from '@/contexts/OrgContext';
 import { supabase } from '@/services/supabase';
+import { weatherService } from '@/services/weather';
 import CreateOrgModal from '@/components/CreateOrgModal';
 import AddShowModal from '@/components/AddShowModal';
+import MonthCalendar from '@/components/calendar/MonthCalendar';
+import EventDetailsModal from '@/components/calendar/EventDetailsModal';
 import { useNavigate } from 'react-router-dom';
+
+// Types
+interface Show {
+  id: string;
+  title: string;
+  date: string;
+  time?: string;
+  venue?: {
+    name: string;
+    city: string;
+  };
+  earnings?: number;
+}
+
+interface CalendarEvent {
+  id: string;
+  title: string;
+  start: Date;
+  end: Date;
+  resource: {
+    show: Show;
+    weather?: any;
+    earnings?: number;
+  };
+}
 
 export default function Dashboard() {
   const { currentOrg, userOrgs, loading, switchOrg } = useOrg();
@@ -13,81 +41,152 @@ export default function Dashboard() {
   const [isCreateOrgOpen, setIsCreateOrgOpen] = useState(false);
   const [isOrgDropdownOpen, setIsOrgDropdownOpen] = useState(false);
   const [isAddShowOpen, setIsAddShowOpen] = useState(false);
-  const [nextShow, setNextShow] = useState<any>(null);
+  
+  // Calendar-specific state
+  const [shows, setShows] = useState<Show[]>([]);
+  const [weather, setWeather] = useState<any[]>([]);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+  const [isEventModalOpen, setIsEventModalOpen] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
   const [stats, setStats] = useState({ totalShows: 0, totalEarnings: 0 });
 
   const useMockData = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 
-  // Fetch dashboard data
+  // Fetch calendar data (shows + weather)
   useEffect(() => {
-    const fetchDashboardData = async () => {
+    const fetchCalendarData = async () => {
       if (!currentOrg) return;
-
+      
+      setIsLoadingData(true);
       try {
         if (useMockData) {
-          console.log('🧪 Mock: Loading dashboard data for', currentOrg.name);
-          await new Promise(resolve => setTimeout(resolve, 400)); // Simulate loading
+          console.log('🧪 Mock: Loading calendar data for', currentOrg.name);
+          await new Promise(resolve => setTimeout(resolve, 600)); // Simulate loading
           
-          // Mock next show
-          const mockNextShow = {
-            id: 'show-next',
-            title: 'Saturday Night Show',
-            date: '2024-12-20',
-            time: '19:30',
-            venue: {
-              name: 'Ryman Auditorium',
-              city: 'Nashville'
+          // Mock shows data
+          const mockShows = [
+            {
+              id: 'show-1',
+              title: 'Friday Night Live',
+              date: '2024-12-15',
+              time: '20:00',
+              venue: { name: 'The Bluebird Cafe', city: 'Nashville' },
+              earnings: 3750
+            },
+            {
+              id: 'show-2',
+              title: 'Saturday Night Show',
+              date: '2024-12-21',
+              time: '19:30',
+              venue: { name: 'Ryman Auditorium', city: 'Nashville' },
+              earnings: 5500
+            },
+            {
+              id: 'show-3',
+              title: 'New Year\'s Eve Celebration',
+              date: '2024-12-31',
+              time: '21:00',
+              venue: { name: 'Music City Hall', city: 'Nashville' },
+              earnings: 8500
+            },
+            {
+              id: 'show-4',
+              title: 'Winter Concert',
+              date: '2025-01-15',
+              time: '18:00',
+              venue: { name: 'Downtown Venue', city: 'Nashville' },
+              earnings: 4200
             }
-          };
-          setNextShow(mockNextShow);
-
-          // Mock stats
+          ];
+          
+          setShows(mockShows);
+          
+          // Fetch weather for shows
+          const weatherData = await weatherService.getWeatherForCalendar(mockShows);
+          setWeather(weatherData);
+          
+          // Calculate stats
+          const totalEarnings = mockShows.reduce((sum, show) => sum + (show.earnings || 0), 0);
           setStats({
-            totalShows: 3,
-            totalEarnings: 12723.50
+            totalShows: mockShows.length,
+            totalEarnings
           });
+          
+          setIsLoadingData(false);
           return;
         }
 
-        // Fetch next upcoming show
-        const today = new Date().toISOString().split('T')[0];
-        const { data: shows } = await supabase
+        // Fetch real shows data
+        const { data: showsData, error: showsError } = await supabase
           .from('shows')
-          .select('*, venue:venues(*)')
+          .select('*, venue:venues(*), earnings(*)')
           .eq('org_id', currentOrg.id)
-          .gte('date', today)
-          .order('date', { ascending: true })
-          .limit(1);
+          .order('date', { ascending: true });
 
-        if (shows && shows.length > 0) {
-          setNextShow(shows[0]);
+        if (showsError) {
+          console.error('Error fetching shows:', showsError);
+          setIsLoadingData(false);
+          return;
         }
 
-        // Fetch total shows count
-        const { count: showCount } = await supabase
-          .from('shows')
-          .select('*', { count: 'exact', head: true })
-          .eq('org_id', currentOrg.id);
+        // Process shows data
+        const processedShows = showsData?.map(show => ({
+          id: show.id,
+          title: show.title,
+          date: show.date,
+          time: show.time,
+          venue: show.venue ? {
+            name: show.venue.name,
+            city: show.venue.city
+          } : undefined,
+          earnings: show.earnings?.reduce((sum: number, e: any) => sum + e.amount, 0) || 0
+        })) || [];
 
-        // Fetch total earnings
-        const { data: earnings } = await supabase
-          .from('earnings')
-          .select('amount')
-          .eq('org_id', currentOrg.id);
+        setShows(processedShows);
 
-        const totalEarnings = earnings?.reduce((sum, e) => sum + e.amount, 0) || 0;
+        // Fetch weather for shows
+        if (processedShows.length > 0) {
+          try {
+            const weatherData = await weatherService.getWeatherForCalendar(processedShows);
+            setWeather(weatherData);
+          } catch (weatherError) {
+            console.error('Error fetching weather:', weatherError);
+            setWeather([]);
+          }
+        }
 
+        // Calculate stats
+        const totalEarnings = processedShows.reduce((sum, show) => sum + (show.earnings || 0), 0);
         setStats({
-          totalShows: showCount || 0,
-          totalEarnings: totalEarnings
+          totalShows: processedShows.length,
+          totalEarnings
         });
+        
       } catch (error) {
-        console.error('Error fetching dashboard data:', error);
+        console.error('Error fetching calendar data:', error);
+      } finally {
+        setIsLoadingData(false);
       }
     };
 
-    fetchDashboardData();
-  }, [currentOrg]);
+    fetchCalendarData();
+  }, [currentOrg, useMockData]);
+
+  // Calendar event handlers
+  const handleEventSelect = (event: CalendarEvent) => {
+    setSelectedEvent(event);
+    setIsEventModalOpen(true);
+  };
+
+  const handleDateSelect = (date: Date) => {
+    // Open add show modal with pre-selected date
+    setIsAddShowOpen(true);
+  };
+
+  const handleEditShow = (show: Show) => {
+    // Navigate to shows page or open edit modal
+    navigate(`/shows?edit=${show.id}`);
+  };
 
   if (loading) {
     return (
@@ -133,10 +232,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-card border-b border-border px-4 py-6">
-        <div className="max-w-md mx-auto">
+      <header className="bg-card border-b border-border px-4 py-4 md:py-6">
+        <div className="max-w-6xl mx-auto">
           {/* Organization Selector */}
-          <div className="relative mb-4">
+          <div className="relative mb-4 max-w-md">
             <button
               onClick={() => setIsOrgDropdownOpen(!isOrgDropdownOpen)}
               className={cn(
@@ -192,117 +291,103 @@ export default function Dashboard() {
             )}
           </div>
           
-          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Welcome back to {currentOrg?.name || 'ChordLine'}!
-          </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-foreground">Calendar</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                {currentOrg?.name} - Shows, earnings, and weather at a glance
+              </p>
+            </div>
+            
+            {/* Stats Summary */}
+            <div className="hidden md:flex items-center space-x-6">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-foreground">{stats.totalShows}</p>
+                <p className="text-xs text-muted-foreground">Shows</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-600">${stats.totalEarnings.toLocaleString()}</p>
+                <p className="text-xs text-muted-foreground">Earnings</p>
+              </div>
+            </div>
+          </div>
         </div>
       </header>
 
-      <div className="max-w-md mx-auto px-4 py-6 space-y-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-card border border-border rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <Calendar className="h-5 w-5 text-blue-600" />
-              <span className="text-sm font-medium text-muted-foreground">Total Shows</span>
-            </div>
+      <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        {/* Mobile Stats Cards */}
+        <div className="md:hidden grid grid-cols-2 gap-4">
+          <div className="bg-card border border-border rounded-lg p-4 text-center">
             <p className="text-2xl font-bold text-foreground">{stats.totalShows}</p>
+            <p className="text-sm text-muted-foreground">Total Shows</p>
           </div>
-          <div className="bg-card border border-border rounded-lg p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <DollarSign className="h-5 w-5 text-green-600" />
-              <span className="text-sm font-medium text-muted-foreground">Total Earnings</span>
-            </div>
-            <p className="text-2xl font-bold text-foreground">${stats.totalEarnings.toLocaleString()}</p>
+          <div className="bg-card border border-border rounded-lg p-4 text-center">
+            <p className="text-2xl font-bold text-green-600">${stats.totalEarnings.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">Total Earnings</p>
           </div>
         </div>
 
-        {/* Next Show Card */}
-        <div className="bg-card rounded-lg p-4 border border-border">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="font-semibold text-foreground">Next Show</h2>
-            <CloudSun className="h-5 w-5 text-muted-foreground" />
-          </div>
-          
-          {nextShow ? (
-            <div className="space-y-2">
-              <h3 className="font-medium text-foreground">
-                {nextShow.title || nextShow.venue.name}
-              </h3>
-              <div className="text-sm text-muted-foreground space-y-1">
-                <p className="flex items-center space-x-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{new Date(nextShow.date).toLocaleDateString()}</span>
-                </p>
-                <p>{nextShow.venue.name}, {nextShow.venue.city}</p>
+        {/* Calendar Component */}
+        <div className="relative">
+          {isLoadingData && (
+            <div className="absolute inset-0 bg-background/80 flex items-center justify-center z-10 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <span className="text-sm text-muted-foreground">Loading calendar...</span>
               </div>
             </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <Calendar className="h-12 w-12 mx-auto mb-2 opacity-50" />
-              <p>No upcoming shows</p>
-              <p className="text-sm">Add your first show to get started!</p>
-            </div>
           )}
+          
+          <MonthCalendar
+            shows={shows}
+            weather={weather}
+            onEventSelect={handleEventSelect}
+            onDateSelect={handleDateSelect}
+            className={cn(isLoadingData && "opacity-50")}
+          />
         </div>
 
         {/* Quick Actions */}
-        <div className="space-y-3">
-          <h3 className="font-medium text-foreground">Quick Actions</h3>
+        <div className="flex flex-wrap gap-3">
+          <button 
+            onClick={() => setIsAddShowOpen(true)}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md',
+              'font-medium hover:bg-primary/90 focus:outline-none focus:ring-2',
+              'focus:ring-primary focus:ring-offset-2'
+            )}
+          >
+            <Plus className="h-4 w-4" />
+            Add Show
+          </button>
           
-          <div className="grid grid-cols-1 gap-3">
-            <button 
-              onClick={() => setIsAddShowOpen(true)}
-              className={cn(
-                'flex items-center gap-3 p-4 bg-card border border-border rounded-lg',
-                'text-left transition-colors hover:bg-accent'
-              )}
-            >
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <Plus className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-foreground">Log a Show</p>
-                <p className="text-sm text-muted-foreground">Add a new performance</p>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => navigate('/assistant')}
-              className={cn(
-                'flex items-center gap-3 p-4 bg-card border border-border rounded-lg',
-                'text-left transition-colors hover:bg-accent'
-              )}
-            >
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <MessageCircle className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-foreground">Ask ChordLine AI</p>
-                <p className="text-sm text-muted-foreground">Get smart suggestions</p>
-              </div>
-            </button>
-
-            <button 
-              onClick={() => navigate('/integrations')}
-              className={cn(
-                'flex items-center gap-3 p-4 bg-card border border-border rounded-lg',
-                'text-left transition-colors hover:bg-accent'
-              )}
-            >
-              <div className="bg-primary/10 p-2 rounded-lg">
-                <Calendar className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="font-medium text-foreground">Import Calendar</p>
-                <p className="text-sm text-muted-foreground">Sync from Google Calendar</p>
-              </div>
-            </button>
-          </div>
+          <button 
+            onClick={() => navigate('/assistant')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-md',
+              'font-medium hover:bg-accent focus:outline-none focus:ring-2',
+              'focus:ring-primary focus:ring-offset-2'
+            )}
+          >
+            <MessageCircle className="h-4 w-4" />
+            AI Assistant
+          </button>
+          
+          <button 
+            onClick={() => navigate('/profile')}
+            className={cn(
+              'flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-md',
+              'font-medium hover:bg-accent focus:outline-none focus:ring-2',
+              'focus:ring-primary focus:ring-offset-2'
+            )}
+          >
+            <Calendar className="h-4 w-4" />
+            Connections
+          </button>
         </div>
       </div>
       
+      {/* Modals */}
       <CreateOrgModal 
         isOpen={isCreateOrgOpen} 
         onClose={() => setIsCreateOrgOpen(false)} 
@@ -315,11 +400,18 @@ export default function Dashboard() {
           orgId={currentOrg.id}
           onShowAdded={() => {
             setIsAddShowOpen(false);
-            // Refresh dashboard data
+            // Refresh calendar data
             window.location.reload();
           }}
         />
       )}
+      
+      <EventDetailsModal
+        isOpen={isEventModalOpen}
+        onClose={() => setIsEventModalOpen(false)}
+        event={selectedEvent}
+        onEditShow={handleEditShow}
+      />
     </div>
   );
 }

@@ -1,18 +1,20 @@
-import { useState } from 'react';
-import { User, Mail, Music2, Users, Settings, LogOut, Camera, Save } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { User, Mail, Music2, Users, Settings, LogOut, Camera, Save, Plug } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/contexts/AuthContext';
 import { useOrg } from '@/contexts/OrgContext';
 import { signOut, supabase } from '@/services/supabase';
+import GoogleCalendarIntegration from '@/components/integrations/GoogleCalendarIntegration';
 import { useNavigate } from 'react-router-dom';
 
 export default function Profile() {
   const { user } = useAuth();
   const { currentOrg, userOrgs } = useOrg();
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<'account' | 'band'>('account');
+  const [activeTab, setActiveTab] = useState<'account' | 'band' | 'connections'>('account');
   const [displayName, setDisplayName] = useState(user?.user_metadata?.full_name || '');
   const [isSaving, setIsSaving] = useState(false);
+  const [shows, setShows] = useState<any[]>([]);
 
   const handleSignOut = async () => {
     await signOut();
@@ -20,6 +22,66 @@ export default function Profile() {
   };
 
   const useMockData = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
+  // Load shows for Google Calendar integration
+  useEffect(() => {
+    const loadShows = async () => {
+      if (!currentOrg) return;
+
+      try {
+        if (useMockData) {
+          // Mock shows data
+          const mockShows = [
+            {
+              id: 'show-1',
+              title: 'Friday Night Live',
+              date: '2024-12-15',
+              time: '20:00',
+              venue: { name: 'The Bluebird Cafe', city: 'Nashville' }
+            },
+            {
+              id: 'show-2',
+              title: 'Saturday Night Show',
+              date: '2024-12-21',
+              time: '19:30',
+              venue: { name: 'Ryman Auditorium', city: 'Nashville' }
+            }
+          ];
+          setShows(mockShows);
+          return;
+        }
+
+        // Fetch real shows
+        const { data, error } = await supabase
+          .from('shows')
+          .select('*, venue:venues(*)')
+          .eq('org_id', currentOrg.id)
+          .order('date', { ascending: true });
+
+        if (error) {
+          console.error('Error fetching shows:', error);
+          return;
+        }
+
+        const processedShows = data?.map(show => ({
+          id: show.id,
+          title: show.title,
+          date: show.date,
+          time: show.time,
+          venue: show.venue ? {
+            name: show.venue.name,
+            city: show.venue.city
+          } : undefined
+        })) || [];
+
+        setShows(processedShows);
+      } catch (error) {
+        console.error('Error loading shows:', error);
+      }
+    };
+
+    loadShows();
+  }, [currentOrg, useMockData]);
 
   const handleSaveProfile = async () => {
     if (!user) return;
@@ -91,6 +153,20 @@ export default function Profile() {
               <div className="flex items-center space-x-2">
                 <Music2 className="h-4 w-4" />
                 <span>Band</span>
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('connections')}
+              className={cn(
+                "px-3 py-2 text-sm font-medium rounded-md transition-colors",
+                activeTab === 'connections'
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+              )}
+            >
+              <div className="flex items-center space-x-2">
+                <Plug className="h-4 w-4" />
+                <span>Connections</span>
               </div>
             </button>
           </div>
@@ -183,8 +259,53 @@ export default function Profile() {
               </button>
             </div>
           </div>
+        ) : activeTab === 'connections' ? (
+          <div className="space-y-6">
+            {/* Google Calendar Integration */}
+            <GoogleCalendarIntegration
+              shows={shows}
+              onConnectionChange={(connected) => {
+                console.log('Google Calendar connection status:', connected);
+              }}
+            />
+            
+            {/* Future integrations placeholder */}
+            <div className="bg-card border border-border rounded-lg p-6">
+              <h2 className="font-semibold text-foreground mb-4">More Integrations</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Additional integrations like Spotify for Artists, Instagram, and others will be available here soon.
+              </p>
+              <div className="grid grid-cols-1 gap-3">
+                <div className="flex items-center justify-between p-3 border border-border rounded-md bg-muted/30">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 rounded-lg bg-green-100 text-green-600">
+                      <Music2 className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Spotify for Artists</p>
+                      <p className="text-sm text-muted-foreground">Connect to view analytics</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground">Coming Soon</span>
+                </div>
+                <div className="flex items-center justify-between p-3 border border-border rounded-md bg-muted/30">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 rounded-lg bg-pink-100 text-pink-600">
+                      <Camera className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground">Instagram</p>
+                      <p className="text-sm text-muted-foreground">Auto-generate show posts</p>
+                    </div>
+                  </div>
+                  <span className="text-xs text-muted-foreground">Coming Soon</span>
+                </div>
+              </div>
+            </div>
+          </div>
         ) : (
           <div className="space-y-6">
+            {/* Band tab content */}
             {/* Current Band */}
             {currentOrg ? (
               <div className="bg-card border border-border rounded-lg p-6">
